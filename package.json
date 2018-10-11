@@ -1,0 +1,28 @@
+{
+  "name": "hermes-server",
+  "version": "1.0.0",
+  "description": "Backend for Hermes mobile app.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Daniel Császár",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
+    "inversify": "^4.13.0",
+    "inversify-express-utils": "^6.1.0",
+    "mongoose": "^5.3.2",
+    "reflect-metadata": "^0.1.12",
+    "socket.io": "^2.1.1",
+    "typescript": "^3.1.2"
+  },
+  "devDependencies": {
+    "@types/express": "^4.16.0",
+    "@types/jsonwebtoken": "^7.2.8",
+    "@types/mongoose": "^5.2.19",
+    "@types/socket.io": "^1.4.38"
+  }
+}
