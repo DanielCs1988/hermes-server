@@ -2,19 +2,24 @@ import { json } from "body-parser";
 import { Container } from "inversify";
 import "reflect-metadata";
 import { InversifyExpressServer } from "inversify-express-utils";
+import "./controllers/user.controller";
 import {SocketServer} from "./socket/socket-server";
 import {SocketService} from "./services/socket.service";
 import {AuthGuard} from "./middleware/authenticator";
-import {MessageService} from "./services/messageService";
 import {ChatController} from "./controllers/chat.controller";
+import {UserService} from "./services/user.service";
+import {UserRepository} from "./repository/user.repository";
 
 const port = process.env.PORT || 8080;
 
 const container = new Container();
-container.bind<SocketService>('SocketService').to(SocketService).inSingletonScope();
+
 container.bind<AuthGuard>('AuthGuard').to(AuthGuard).inSingletonScope();
-container.bind<MessageService>('MessageService').to(MessageService).inSingletonScope();
+container.bind<SocketService>('SocketService').to(SocketService).inSingletonScope();
 container.bind<ChatController>('ChatController').to(ChatController).inSingletonScope();
+
+container.bind<UserRepository>('UserRepository').to(UserRepository).inSingletonScope();
+container.bind<UserService>('UserService').to(UserService).inSingletonScope();
 
 const server = new InversifyExpressServer(container);
 server.setConfig(app => {

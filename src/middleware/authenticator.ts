@@ -2,14 +2,14 @@ import * as jwks from "jwks-rsa";
 import {verify} from "jsonwebtoken";
 import {Socket} from "socket.io";
 import {Authenticator} from "../socket/types";
-import {SocketActions} from "../constants";
+import {SocketActions} from "../shared/constants";
 import {inject, injectable} from "inversify";
 import {SocketService} from "../services/socket.service";
 
 @injectable()
 export class AuthGuard implements Authenticator {
 
-    constructor(@inject('ChatService') private chatService: SocketService) { }
+    constructor(@inject('SocketService') private socketService: SocketService) { }
 
      authenticate(socket: Socket): Promise<any> {
         return new Promise<any>((resolve, reject) => {
@@ -29,8 +29,8 @@ export class AuthGuard implements Authenticator {
     }
 
     private userJoined = (socket: Socket, userId: string) => {
-        this.chatService.userJoined(userId, socket.id);
-        socket.server.emit(SocketActions.SEND_USER_LIST, this.chatService.Users);
+        this.socketService.userJoined(userId, socket.id);
+        socket.server.emit(SocketActions.SEND_USER_LIST, this.socketService.Users);
         console.log(`User ${userId} joined the server.`);
     };
 
