@@ -44,6 +44,24 @@ export class EventService {
         );
     };
 
+    readonly toggleEventParticipation = async (id: string, userId: string) => {
+        const event = await this.eventRepository.findById(id);
+        if (!event) {
+            return event;
+        }
+        return event.participants.find(participant => participant.equals(userId)) ?
+            this.eventRepository.findByIdAndUpdate(
+                id,
+                { $pull: { participants: userId } },
+                { new: true }
+            ) :
+            this.eventRepository.findByIdAndUpdate(
+                id,
+                { $addToSet: { participants: userId } },
+                { new: true }
+            );
+    };
+
     readonly deleteEvent = async (id: string) => {
         return this.eventRepository.findByIdAndDelete(id);
     };

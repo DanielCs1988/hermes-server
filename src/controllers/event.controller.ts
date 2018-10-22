@@ -58,6 +58,16 @@ export class EventController extends BaseHttpController {
         }
     }
 
+    @httpPost('/:id')
+    private async toggleEventParticipation(@requestParam('id') id: string) {
+        try {
+            const event = await this.eventService.toggleEventParticipation(id, '5bcdc1482e37332310bedb15');
+            return event ? event : this.notFound();
+        } catch (error) {
+            return this.badRequest();
+        }
+    }
+
     @httpDelete('/:id')
     private async deleteEvent(@requestParam('id') id: string) {
         try {
