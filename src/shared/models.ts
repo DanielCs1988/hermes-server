@@ -1,3 +1,5 @@
+import {Types} from "mongoose";
+
 export interface IUser {
     givenName: string;
     familyName: string;
@@ -25,14 +27,14 @@ export interface Location {
 
 export interface IEvent {
     title: string;
-    description?: string;
-    image?: string;
-    location: Location;
-    organizer: string;
-    createdAt: number;
+    image: string;
     from: number;
     to: number;
-    participants: string[];
+    createdAt: number;
+    participants: Types.ObjectId[];
+    organizer: Types.ObjectId;
+    description?: string;
+    location: Location;
 }
 
 export type AckFn = (error: string | null, response?: any) => void;
