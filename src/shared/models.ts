@@ -1,17 +1,17 @@
 import {Types} from "mongoose";
 import {Request} from "express";
+import {UserModel} from "../repository/user.repository";
 
 export interface RequestWithUser extends Request {
-    user: IUser;
+    user: UserModel;
 }
 
 export interface IUser {
-    id: string;
     sub: string;
     givenName: string;
     familyName: string;
     profilePicture: string;
-    registeredAt: number;
+    registeredAt?: number;
     email?: string;
     phone?: string;
     address?: string;

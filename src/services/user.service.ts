@@ -19,8 +19,16 @@ export class UserService {
         return this.userRepository.findById(id);
     };
 
+    readonly getUserBySub = (sub: string) => {
+        return this.userRepository.findOne({ sub });
+    };
+
     readonly createUser = (user: IUser) => {
-        return new this.userRepository(user);
+        const newUser = new this.userRepository({
+            ...user,
+            registeredAt: new Date().getTime()
+        });
+        return newUser.save();
     };
 
     readonly updateUser = async (id: string, user: IUser) => {

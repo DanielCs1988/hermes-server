@@ -7,6 +7,11 @@ export interface UserModel extends Document, IUser { }
 @injectable()
 export class UserRepository {
     private readonly UserSchema = new Schema({
+        sub: {
+            type: String,
+            required: true,
+            unique: true
+        },
         givenName: {
             type: String,
             required: true,
@@ -55,11 +60,11 @@ export class UserRepository {
     private readonly model = model<UserModel>('User', this.UserSchema);
 
     constructor() {
-        this.UserSchema.pre('save', function (next: Function) {
-            const user = <UserModel>this;
-            user.registeredAt = new Date().getTime();
-            next();
-        })
+        this.UserSchema.set('toJSON', {
+            virtuals: true,
+            versionKey: false,
+            transform(_, ret) { delete ret._id; }
+        });
     }
 
     get Model() {
