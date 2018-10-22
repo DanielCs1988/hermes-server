@@ -4,13 +4,13 @@ import {
     httpDelete,
     httpGet,
     httpPost,
-    httpPut,
+    httpPut, request,
     requestBody,
     requestParam
 } from "inversify-express-utils";
 import {inject} from "inversify";
 import {EventService} from "../services/event.service";
-import {IEvent} from "../shared/models";
+import {IEvent, RequestWithUser} from "../shared/models";
 
 @controller('/events')
 export class EventController extends BaseHttpController {
@@ -59,9 +59,9 @@ export class EventController extends BaseHttpController {
     }
 
     @httpPost('/:id')
-    private async toggleEventParticipation(@requestParam('id') id: string) {
+    private async toggleEventParticipation(@requestParam('id') id: string, @request() req: RequestWithUser) {
         try {
-            const event = await this.eventService.toggleEventParticipation(id, '5bcdc1482e37332310bedb15');
+            const event = await this.eventService.toggleEventParticipation(id, req.user.id);
             return event ? event : this.notFound();
         } catch (error) {
             return this.badRequest();

@@ -1,42 +1,33 @@
 import { json } from "body-parser";
 import * as cors from 'cors';
 import { connect } from "mongoose";
-import { Container } from "inversify";
 import "reflect-metadata";
 import { InversifyExpressServer } from "inversify-express-utils";
 import "./controllers/user.controller";
 import "./controllers/event.controller";
 import {SocketServer} from "./socket/socket-server";
-import {SocketService} from "./services/socket.service";
-import {AuthGuard} from "./middleware/authenticator";
-import {ChatController} from "./controllers/chat.controller";
-import {UserService} from "./services/user.service";
-import {UserRepository} from "./repository/user.repository";
-import {EventRepository} from "./repository/event.repository";
-import {EventService} from "./services/event.service";
+import {AuthService} from "./services/auth.service";
+import {Authenticator} from "./middleware/authenticator";
+import {validateJwt} from "./middleware/jwt-validator";
+import {handleErrors} from "./middleware/error-handler";
+import container from "./shared/container";
 
 const port = process.env.PORT || 8080;
 
-const container = new Container();
-
-container.bind<AuthGuard>('AuthGuard').to(AuthGuard).inSingletonScope();
-container.bind<SocketService>('SocketService').to(SocketService).inSingletonScope();
-container.bind<ChatController>('ChatController').to(ChatController).inSingletonScope();
-
-container.bind<UserRepository>('UserRepository').to(UserRepository).inSingletonScope();
-container.bind<UserService>('UserService').to(UserService).inSingletonScope();
-
-container.bind<EventRepository>('EventRepository').to(EventRepository).inSingletonScope();
-container.bind<EventService>('EventService').to(EventService).inSingletonScope();
-
 const server = new InversifyExpressServer(container);
+
+const authenticator = container.get<Authenticator>('Authenticator');
+
 server.setConfig(app => {
     app.use(cors());
+    app.use(validateJwt);
+    app.use(authenticator.getUserFromSub);
     app.use(json());
+    app.use(handleErrors);
 });
 
 const app = server.build();
-const socketServer = new SocketServer(app, [], container.get('AuthGuard'));
+const socketServer = new SocketServer(app, [], container.get('AuthService'));
 
 socketServer.init();
 

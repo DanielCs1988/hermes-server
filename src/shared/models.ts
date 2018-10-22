@@ -1,6 +1,13 @@
 import {Types} from "mongoose";
+import {Request} from "express";
+
+export interface RequestWithUser extends Request {
+    user: IUser;
+}
 
 export interface IUser {
+    id: string;
+    sub: string;
     givenName: string;
     familyName: string;
     profilePicture: string;

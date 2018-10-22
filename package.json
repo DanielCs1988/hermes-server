@@ -5,15 +5,18 @@
   "main": "index.js",
   "scripts": {
     "start": "node dist/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "tsc"
   },
   "author": "Daniel Császár",
   "license": "ISC",
   "dependencies": {
+    "@types/express-jwt": "0.0.40",
     "axios": "^0.18.0",
     "body-parser": "^1.18.3",
     "cors": "^2.8.4",
     "express": "^4.16.4",
+    "express-jwt": "^5.3.1",
     "inversify": "^4.13.0",
     "inversify-express-utils": "^6.2.0",
     "jsonwebtoken": "^8.3.0",
@@ -21,7 +24,8 @@
     "mongoose": "^5.3.2",
     "reflect-metadata": "^0.1.12",
     "socket.io": "^2.1.1",
-    "typescript": "^3.1.2"
+    "typescript": "^3.1.2",
+    "uninstall": "0.0.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.4",
