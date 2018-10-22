@@ -2,6 +2,7 @@ import {inject, injectable} from "inversify";
 import { IUser } from "../shared/models";
 import { UserModel, UserRepository } from "../repository/user.repository";
 import { Model } from "mongoose";
+import { pick } from 'lodash';
 
 @injectable()
 export class UserService {
@@ -32,11 +33,13 @@ export class UserService {
     };
 
     readonly updateUser = async (id: string, user: IUser) => {
-        const { givenName, familyName, profilePicture, address, birthday, email, phone } = user;
+        const updatedFields = pick(user, [
+            'givenName', 'familyName', 'profilePicture', 'address', 'birthday', 'email', 'phone'
+        ]);
         return this.userRepository.findByIdAndUpdate(
             id,
-            { $set: { givenName, familyName, profilePicture, address, birthday, email, phone } },
-            { new: true }
+            { $set: updatedFields },
+            { new: true, upsert: true }
         );
     };
 

@@ -1,7 +1,7 @@
 import { inject, injectable } from "inversify";
 import { IEvent } from "../shared/models";
 import { EventModel, EventRepository } from "../repository/event.repository";
-import {Model, Types} from "mongoose";
+import { Model } from "mongoose";
 import { pick } from 'lodash';
 
 @injectable()
@@ -20,25 +20,25 @@ export class EventService {
         return this.eventRepository.findById(id);
     };
 
-    readonly createEvent = (event: IEvent) => {
+    readonly createEvent = (event: IEvent, userId: string) => {
         const { title, from, to, image, description, location: { name, longitude, latitude } } = event;
         const newEvent = new this.eventRepository({
             title, from, to, image, description,
             location: { name, longitude, latitude },
-            organizer: new Types.ObjectId(),
+            organizer: userId,
             participants: [],
             createdAt: new Date().getTime()
         });
         return newEvent.save();
     };
 
-    readonly updateEvent = async (id: string, event: IEvent) => {
+    readonly updateEvent = async (id: string, event: IEvent, userId: string) => {
         const updatedFields = pick(event, ['title', 'from', 'to', 'image', 'description']);
         if (event.location) {
             updatedFields.location = pick(event.location, ['name', 'longitude', 'latitude']);
         }
-        return this.eventRepository.findByIdAndUpdate(
-            id,
+        return this.eventRepository.findOneAndUpdate(
+            { _id: id, organizer: userId },
             { $set: updatedFields },
             { new: true, upsert: true }
         );
@@ -62,7 +62,9 @@ export class EventService {
             );
     };
 
-    readonly deleteEvent = async (id: string) => {
-        return this.eventRepository.findByIdAndDelete(id);
+    readonly deleteEvent = async (id: string, userId: string) => {
+        return this.eventRepository.findOneAndDelete(
+            { _id: id, organizer: userId }
+        );
     };
 }

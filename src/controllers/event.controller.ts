@@ -4,7 +4,8 @@ import {
     httpDelete,
     httpGet,
     httpPost,
-    httpPut, request,
+    httpPut,
+    request,
     requestBody,
     requestParam
 } from "inversify-express-utils";
@@ -39,9 +40,9 @@ export class EventController extends BaseHttpController {
     }
 
     @httpPost('/')
-    private async createEvent(@requestBody() event: IEvent) {
+    private async createEvent(@requestBody() event: IEvent, @request() req: RequestWithUser) {
         try {
-            return await this.eventService.createEvent(event);
+            return await this.eventService.createEvent(event, req.user.id);
         } catch (error) {
             console.log(error);
             return this.badRequest();
@@ -49,9 +50,13 @@ export class EventController extends BaseHttpController {
     }
 
     @httpPut('/:id')
-    private async updateEvent(@requestParam('id') id: string, @requestBody() event: IEvent) {
+    private async updateEvent(
+        @requestParam('id') id: string,
+        @requestBody() event: IEvent,
+        @request() req: RequestWithUser
+    ) {
         try {
-            const savedEvent = await this.eventService.updateEvent(id, event);
+            const savedEvent = await this.eventService.updateEvent(id, event, req.user.id);
             return savedEvent ? savedEvent : this.notFound();
         } catch (error) {
             return this.badRequest();
@@ -69,9 +74,9 @@ export class EventController extends BaseHttpController {
     }
 
     @httpDelete('/:id')
-    private async deleteEvent(@requestParam('id') id: string) {
+    private async deleteEvent(@requestParam('id') id: string, @request() req: RequestWithUser) {
         try {
-            const Event = await this.eventService.deleteEvent(id);
+            const Event = await this.eventService.deleteEvent(id, req.user.id);
             return Event ? Event : this.notFound();
         } catch (error) {
             return this.badRequest();
