@@ -12,4 +12,4 @@ export const validateJwt = jwt({
     audience: process.env.JWT_AUDIENCE!,
     issuer: process.env.JWT_ISSUER,
     algorithms: ['RS256']
-});
+}).unless({ path: '/socket.io/' });

@@ -1,3 +1,4 @@
+import * as http from 'http';
 import { json } from "body-parser";
 import * as cors from 'cors';
 import { connect } from "mongoose";
@@ -27,13 +28,17 @@ server.setConfig(app => {
 });
 
 const app = server.build();
-const socketServer = new SocketServer(app, [], container.get('AuthService'));
+const httpServer = http.createServer(app);
+const socketServer = new SocketServer(
+    httpServer,
+    [container.get('ChatController')],
+    container.get('AuthService'));
 
 socketServer.init();
 
 connect(process.env.MONGODB_URI!, { useNewUrlParser: true })
     .then(() => {
-        app.listen(port, () => console.log(`Server is running on port ${port}...`));
+        httpServer.listen(port, () => console.log(`Server is running on port ${port}...`));
     })
     .catch((error) => {
         console.log(`Could not connect to MongoDB.\nReason: ${error.stack}`);

@@ -16,10 +16,10 @@ export class AuthService implements Authenticator {
         return new Promise<any>((resolve, reject) => {
             socket.on(SocketActions.AUTHENTICATE, async (token: string, ack: Function) => {
                 try {
-                    const userId = await this.getAuthIdFromToken(token);
+                    const userSub = await this.getSubFromToken(token);
                     ack();
-                    this.userJoined(socket, userId);
-                    resolve({ userId, token });
+                    this.userJoined(socket, userSub);
+                    resolve(userSub);
                 } catch (error) {
                     ack(error);
                     socket.disconnect();
@@ -29,10 +29,10 @@ export class AuthService implements Authenticator {
         });
     };
 
-    private userJoined = (socket: Socket, userId: string) => {
-        this.socketService.userJoined(userId, socket.id);
+    private userJoined = (socket: Socket, userSub: string) => {
+        this.socketService.userJoined(userSub, socket.id);
         socket.server.emit(SocketActions.SEND_USER_LIST, this.socketService.Users);
-        console.log(`User ${userId} joined the server.`);
+        console.log(`User with SUB: ${userSub} joined the server.`);
     };
 
     private readonly jwksClient = jwks({
@@ -56,7 +56,7 @@ export class AuthService implements Authenticator {
         });
     };
 
-    private readonly getAuthIdFromToken = (token: string): Promise<string> => {
+    private readonly getSubFromToken = (token: string): Promise<string> => {
         return new Promise((resolve, reject) => {
             verify(token, this.keyResolver as any, this.options, (err, claims: any) => {
                 if (err) {

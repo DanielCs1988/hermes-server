@@ -1,7 +1,7 @@
 import { Socket } from "socket.io";
 
 export interface SocketContext extends Socket {
-    credentials?: any;
+    userSub?: string;
 }
 
 export type HandlerMapping = { [event: string]: (socket: SocketContext, ...args: any[]) => void };

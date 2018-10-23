@@ -25,7 +25,8 @@
     "reflect-metadata": "^0.1.12",
     "socket.io": "^2.1.1",
     "typescript": "^3.1.2",
-    "uninstall": "0.0.0"
+    "uninstall": "0.0.0",
+    "uuid": "^3.3.2"
   },
   "devDependencies": {
     "@types/cors": "^2.8.4",
@@ -33,6 +34,7 @@
     "@types/jsonwebtoken": "^7.2.8",
     "@types/mongoose": "^5.2.19",
     "@types/socket.io": "^1.4.38",
+    "@types/uuid": "^3.4.4",
     "lodash": "^4.17.11"
   }
 }

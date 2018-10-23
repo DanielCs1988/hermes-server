@@ -10,9 +10,11 @@ export class Authenticator {
     constructor(@inject('UserService') private userService: UserService) { }
 
     readonly getUserFromSub = async (req: RequestWithUser, res: Response, next: NextFunction) => {
-        const sub = req.user.sub;
-        const authHeader = req.header('Authorization');
-        req.user = await this.createOrFetchUser(sub, authHeader!);
+        if (req.user) {
+            const sub = req.user.sub;
+            const authHeader = req.header('Authorization');
+            req.user = await this.createOrFetchUser(sub, authHeader!);
+        }
         next();
     };
 
