@@ -25,7 +25,7 @@ export class EventController extends BaseHttpController {
         try {
             return await this.eventService.getAllEvents();
         } catch (error) {
-            return this.badRequest();
+            return this.badRequest('Database error!');
         }
     }
 
@@ -35,7 +35,7 @@ export class EventController extends BaseHttpController {
             const Event = await this.eventService.getEventById(id);
             return Event ? Event : this.notFound();
         } catch (error) {
-            return this.badRequest();
+            return this.badRequest('Database error!');
         }
     }
 
@@ -44,8 +44,7 @@ export class EventController extends BaseHttpController {
         try {
             return await this.eventService.createEvent(event, req.user.id);
         } catch (error) {
-            console.log(error);
-            return this.badRequest();
+            return this.badRequest(error.name === 'ValidationError' ? error.message : 'Database error!');
         }
     }
 
@@ -59,7 +58,7 @@ export class EventController extends BaseHttpController {
             const savedEvent = await this.eventService.updateEvent(id, event, req.user.id);
             return savedEvent ? savedEvent : this.notFound();
         } catch (error) {
-            return this.badRequest();
+            return this.badRequest('Database error!');
         }
     }
 
@@ -69,7 +68,7 @@ export class EventController extends BaseHttpController {
             const event = await this.eventService.toggleEventParticipation(id, req.user.id);
             return event ? event : this.notFound();
         } catch (error) {
-            return this.badRequest();
+            return this.badRequest('Database error!');
         }
     }
 
@@ -79,7 +78,7 @@ export class EventController extends BaseHttpController {
             const Event = await this.eventService.deleteEvent(id, req.user.id);
             return Event ? Event : this.notFound();
         } catch (error) {
-            return this.badRequest();
+            return this.badRequest('Database error!');
         }
     }
 }
