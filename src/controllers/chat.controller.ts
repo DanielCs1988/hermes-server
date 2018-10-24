@@ -1,35 +1,39 @@
-import {inject, injectable} from "inversify";
-import {Controller, HandlerMapping, SocketContext} from "../socket/types";
-import {SocketActions} from "../shared/constants";
-import {SocketService} from "../services/socket.service";
-import {AckFn, IMessage} from "../shared/models";
+import {
+    BaseHttpController,
+    controller,
+    httpGet,
+    httpPost,
+    request,
+    requestParam
+} from "inversify-express-utils";
+import {inject} from "inversify";
+import {ChatService} from "../services/chat.service";
+import {RequestWithUser} from "../shared/models";
 
-@injectable()
-export class ChatController implements Controller {
+@controller('/chat')
+export class ChatController extends BaseHttpController {
 
-    constructor(@inject('SocketService') private socketService: SocketService) { }
+    constructor(@inject('ChatService') private chatService: ChatService) {
+        super();
+    }
 
-    handlers = (): HandlerMapping => {
-        return {
-            [SocketActions.SEND_PRIVATE_MESSAGE]: this.onSendMessage,
-            [SocketActions.DISCONNECT]: this.onDisconnect
-        };
-    };
-
-    private onSendMessage = (socket: SocketContext, message: IMessage, ack: AckFn) => {
+    @httpGet('/conversations')
+    private async getConversations() {
         try {
-            const messageToSend = this.socketService.processMessage(message, socket.userSub!);
-            const targetSocketId = this.socketService.getSocketId(messageToSend.to) || '';
-            ack(null, messageToSend);
-            socket.to(targetSocketId).emit(SocketActions.SEND_PRIVATE_MESSAGE, messageToSend);
+            return await this.chatService.getAllConversations();
         } catch (error) {
-            ack(error.message);
+            return this.badRequest(JSON.stringify(error, undefined, 4));
         }
-    };
+    }
 
-    private onDisconnect = (socket: SocketContext) => {
-        const newUserList = this.socketService.userLeft(socket.userSub!);
-        socket.server.emit(SocketActions.SEND_USER_LIST, newUserList);
-        console.log(`User with SUB: ${socket.userSub} has left the server.`);
-    };
+    @httpGet('/history/:target')
+    private async getChatHistory(@requestParam('target') target: string, @request() req: RequestWithUser) {
+        try {
+            return await this.chatService.getAllMessages(target, req.user.id);
+        } catch (error) {
+            return error.message === 'Target user does not exist!' ?
+                this.badRequest(error.message) :
+                this.badRequest('Database error!');
+        }
+    }
 }

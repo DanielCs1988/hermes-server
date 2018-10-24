@@ -40,7 +40,7 @@ export class EventService {
         return this.eventRepository.findOneAndUpdate(
             { _id: id, organizer: userId },
             { $set: updatedFields },
-            { new: true, upsert: true }
+            { new: true }
         );
     };
 

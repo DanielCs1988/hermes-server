@@ -7,6 +7,7 @@ import { pick } from 'lodash';
 @injectable()
 export class UserService {
     private readonly userRepository: Model<UserModel>;
+    private readonly userCache = new Map<string, UserModel>();
 
     constructor(@inject('UserRepository') userRepository: UserRepository) {
         this.userRepository = userRepository.Model;
@@ -20,8 +21,16 @@ export class UserService {
         return this.userRepository.findById(id);
     };
 
-    readonly getUserBySub = (sub: string) => {
-        return this.userRepository.findOne({ sub });
+    readonly getUserBySub = async (sub: string) => {
+        const cachedUser = this.userCache.get(sub);
+        if (cachedUser) {
+            return cachedUser;
+        }
+        const userFromDB = await this.userRepository.findOne({ sub });
+        if (userFromDB) {
+            this.userCache.set(sub, userFromDB);
+        }
+        return userFromDB;
     };
 
     readonly createUser = (user: IUser) => {
@@ -39,7 +48,7 @@ export class UserService {
         return this.userRepository.findByIdAndUpdate(
             id,
             { $set: updatedFields },
-            { new: true, upsert: true }
+            { new: true }
         );
     };
 

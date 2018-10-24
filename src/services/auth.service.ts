@@ -1,25 +1,30 @@
 import * as jwks from "jwks-rsa";
 import {verify} from "jsonwebtoken";
 import {Socket} from "socket.io";
-import {Authenticator} from "../socket/types";
+import {SocketAuthMiddleware} from "../socket/types";
 import {SocketActions} from "../shared/constants";
 import {inject, injectable} from "inversify";
 import {SocketService} from "./socket.service";
-import {Request} from "express";
+import {Authenticator} from "../middleware/authenticator";
+import {UserModel} from "../repository/user.repository";
 
 @injectable()
-export class AuthService implements Authenticator {
+export class AuthService implements SocketAuthMiddleware {
 
-    constructor(@inject('SocketService') private socketService: SocketService) { }
+    constructor(
+        @inject('SocketService') private socketService: SocketService,
+        @inject('Authenticator') private authenticator: Authenticator
+    ) { }
 
-     readonly authenticate = (socket: Socket): Promise<any> => {
+     readonly authenticate = (socket: Socket): Promise<UserModel> => {
         return new Promise<any>((resolve, reject) => {
             socket.on(SocketActions.AUTHENTICATE, async (token: string, ack: Function) => {
                 try {
                     const userSub = await this.getSubFromToken(token);
+                    const user = await this.authenticator.createOrFetchUser(userSub, `Bearer ${token}`);
                     ack();
-                    this.userJoined(socket, userSub);
-                    resolve(userSub);
+                    this.userJoined(socket, user);
+                    resolve(user);
                 } catch (error) {
                     ack(error);
                     socket.disconnect();
@@ -29,10 +34,10 @@ export class AuthService implements Authenticator {
         });
     };
 
-    private userJoined = (socket: Socket, userSub: string) => {
-        this.socketService.userJoined(userSub, socket.id);
+    private userJoined = (socket: Socket, user: UserModel) => {
+        this.socketService.userJoined(user.id, socket.id);
         socket.server.emit(SocketActions.SEND_USER_LIST, this.socketService.Users);
-        console.log(`User with SUB: ${userSub} joined the server.`);
+        console.log(`${user.givenName} ${user.familyName} joined the server.`);
     };
 
     private readonly jwksClient = jwks({

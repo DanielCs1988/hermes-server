@@ -1,8 +1,9 @@
 import * as http from 'http';
 import * as socketIO from 'socket.io';
 import {Socket} from "socket.io";
-import {Authenticator, Controller, SocketContext} from "./types";
+import {SocketAuthMiddleware, Controller, SocketContext} from "./types";
 import {SocketActions} from "../shared/constants";
+import {UserModel} from "../repository/user.repository";
 
 export class SocketServer {
 
@@ -11,7 +12,7 @@ export class SocketServer {
     constructor(
         private readonly httpServer: http.Server,
         private readonly controllers: Controller[],
-        private readonly authenticator?: Authenticator
+        private readonly authenticator?: SocketAuthMiddleware
     ) { }
 
     readonly init = () => {
@@ -22,8 +23,8 @@ export class SocketServer {
     private authenticateIfNeeded = async (socket: Socket) => {
         if (this.authenticator) {
             try {
-                const userSub = await this.authenticator.authenticate(socket);
-                this.registerHandlers(socket, userSub);
+                const user = await this.authenticator.authenticate(socket);
+                this.registerHandlers(socket, user);
             } catch (err) {
                 console.log('Unauthorized connection attempt:', err.message);
             }
@@ -32,9 +33,9 @@ export class SocketServer {
         }
     };
 
-    registerHandlers = (socket: SocketContext, userSub?: string) => {
-        if (userSub) {
-            socket.userSub = userSub;
+    registerHandlers = (socket: SocketContext, user?: UserModel) => {
+        if (user) {
+            socket.user = user;
         }
         for (let controller of this.controllers) {
             const mapping = controller.handlers();

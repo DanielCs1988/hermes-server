@@ -9,7 +9,7 @@ export class Authenticator {
 
     constructor(@inject('UserService') private userService: UserService) { }
 
-    readonly getUserFromSub = async (req: RequestWithUser, res: Response, next: NextFunction) => {
+    readonly getUserFromRequest = async (req: RequestWithUser, res: Response, next: NextFunction) => {
         if (req.user) {
             const sub = req.user.sub;
             const authHeader = req.header('Authorization');
@@ -18,7 +18,7 @@ export class Authenticator {
         next();
     };
 
-    private readonly createOrFetchUser = async (sub: string, authHeader: string) => {
+    readonly createOrFetchUser = async (sub: string, authHeader: string) => {
         let user = await this.userService.getUserBySub(sub);
         if (!user) {
             const { data: profile } = await axios.get(process.env.USERINFO_ENDPOINT!, {

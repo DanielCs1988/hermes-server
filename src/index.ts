@@ -6,6 +6,7 @@ import "reflect-metadata";
 import { InversifyExpressServer } from "inversify-express-utils";
 import "./controllers/user.controller";
 import "./controllers/event.controller";
+import "./controllers/chat.controller";
 import {SocketServer} from "./socket/socket-server";
 import {AuthService} from "./services/auth.service";
 import {Authenticator} from "./middleware/authenticator";
@@ -22,7 +23,7 @@ const authenticator = container.get<Authenticator>('Authenticator');
 server.setConfig(app => {
     app.use(cors());
     app.use(validateJwt);
-    app.use(authenticator.getUserFromSub);
+    app.use(authenticator.getUserFromRequest);
     app.use(json());
     app.use(handleErrors);
 });
