@@ -1,4 +1,3 @@
-import {Types} from "mongoose";
 import {Request} from "express";
 import {UserModel} from "../repository/user.repository";
 
@@ -18,12 +17,16 @@ export interface IUser {
     birthday?: number;
 }
 
+export interface IConversation {
+    users: string[];
+    history: IMessage[];
+}
+
 export interface IMessage {
-    id?: string;
-    content: string;
-    from?: string;
+    from: string;
     to: string;
-    createdAt?: number;
+    content: string;
+    createdAt: number;
 }
 
 export interface Location {
@@ -38,8 +41,8 @@ export interface IEvent {
     from: number;
     to: number;
     createdAt: number;
-    participants: Types.ObjectId[];
-    organizer: Types.ObjectId;
+    participants: string[];
+    organizer: string;
     description?: string;
     location: Location;
 }

@@ -49,7 +49,7 @@ export class EventService {
         if (!event) {
             return event;
         }
-        return event.participants.find(participant => participant.equals(userId)) ?
+        return event.participants.find(participant => participant === userId) ?
             this.eventRepository.findByIdAndUpdate(
                 id,
                 { $pull: { participants: userId } },
