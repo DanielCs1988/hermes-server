@@ -17,8 +17,8 @@ export class ChatService {
         this.userRepository = userRepository.Model;
     }
 
-    readonly getAllConversations = () => {
-        return this.conversationModel.aggregate([
+    readonly getAllConversations = async () => {
+        const conversations = await this.conversationModel.aggregate([
             {
                 $project: {
                     id: "$_id",
@@ -28,6 +28,14 @@ export class ChatService {
                 }
             }
         ]);
+        return conversations.map(conversation => {
+            const { _id, ...message } = conversation.lastMessage;
+            message.id = _id;
+            return {
+                ...conversation,
+                lastMessage: message
+            }
+        });
     };
 
     readonly getAllMessages = async (target: string, currentUser: string) => {
