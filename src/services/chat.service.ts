@@ -1,4 +1,4 @@
-import { inject, injectable } from "inversify";
+import { injectable } from "inversify";
 import {IMessage} from "../shared/models";
 import {ChatRepository, ConversationModel, MessageModel} from "../repository/chat.repository";
 import { Model } from "mongoose";
@@ -11,10 +11,7 @@ export class ChatService {
     private readonly conversationModel: Model<ConversationModel>;
     private readonly userRepository: Model<UserModel>;
 
-    constructor(
-        @inject('ChatRepository') chatRepository: ChatRepository,
-        @inject('UserRepository') userRepository: UserRepository
-    ) {
+    constructor(chatRepository: ChatRepository, userRepository: UserRepository) {
         this.messageModel = chatRepository.messageModel;
         this.conversationModel = chatRepository.conversationModel;
         this.userRepository = userRepository.Model;

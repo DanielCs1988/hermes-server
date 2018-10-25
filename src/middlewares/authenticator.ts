@@ -1,5 +1,5 @@
 import {NextFunction, Response} from "express";
-import {inject, injectable} from "inversify";
+import {injectable} from "inversify";
 import {UserService} from "../services/user.service";
 import {RequestWithUser} from "../shared/models";
 import axios from 'axios';
@@ -7,7 +7,7 @@ import axios from 'axios';
 @injectable()
 export class Authenticator {
 
-    constructor(@inject('UserService') private userService: UserService) { }
+    constructor(private userService: UserService) { }
 
     readonly getUserFromRequest = async (req: RequestWithUser, res: Response, next: NextFunction) => {
         if (req.user) {

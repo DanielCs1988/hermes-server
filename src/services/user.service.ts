@@ -1,4 +1,4 @@
-import {inject, injectable} from "inversify";
+import { injectable } from "inversify";
 import { IUser } from "../shared/models";
 import { UserModel, UserRepository } from "../repository/user.repository";
 import { Model } from "mongoose";
@@ -9,7 +9,7 @@ export class UserService {
     private readonly userRepository: Model<UserModel>;
     private readonly userCache = new Map<string, UserModel>();
 
-    constructor(@inject('UserRepository') userRepository: UserRepository) {
+    constructor(userRepository: UserRepository) {
         this.userRepository = userRepository.Model;
     }
 

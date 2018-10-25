@@ -9,14 +9,13 @@ import {
     requestBody,
     requestParam
 } from "inversify-express-utils";
-import {inject} from "inversify";
 import {EventService} from "../services/event.service";
 import {IEvent, RequestWithUser} from "../shared/models";
 
 @controller('/events')
 export class EventController extends BaseHttpController {
 
-    constructor(@inject('EventService') private eventService: EventService) {
+    constructor(private eventService: EventService) {
         super();
     }
 

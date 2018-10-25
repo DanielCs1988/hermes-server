@@ -7,14 +7,13 @@ import {
     requestBody,
     requestParam
 } from "inversify-express-utils";
-import {inject} from "inversify";
 import {UserService} from "../services/user.service";
 import {IUser, RequestWithUser} from "../shared/models";
 
 @controller('/users')
 export class UserController extends BaseHttpController {
 
-    constructor(@inject('UserService') private userService: UserService) {
+    constructor(private userService: UserService) {
         super();
     }
 

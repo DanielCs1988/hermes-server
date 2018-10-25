@@ -1,4 +1,4 @@
-import {inject, injectable} from "inversify";
+import {injectable} from "inversify";
 import {Controller, HandlerMapping, SocketContext} from "../socket/types";
 import {SocketActions} from "../shared/constants";
 import {SocketService} from "../services/socket.service";
@@ -8,10 +8,7 @@ import {ChatService} from "../services/chat.service";
 @injectable()
 export class SocketController implements Controller {
 
-    constructor(
-        @inject('SocketService') private socketService: SocketService,
-        @inject('ChatService') private chatService: ChatService
-    ) { }
+    constructor(private socketService: SocketService, private chatService: ChatService) { }
 
     handlers = (): HandlerMapping => {
         return {

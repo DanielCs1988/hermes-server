@@ -1,4 +1,4 @@
-import { inject, injectable } from "inversify";
+import { injectable } from "inversify";
 import { IEvent } from "../shared/models";
 import { EventModel, EventRepository } from "../repository/event.repository";
 import { Model } from "mongoose";
@@ -8,7 +8,7 @@ import { pick } from 'lodash';
 export class EventService {
     private readonly eventRepository: Model<EventModel>;
 
-    constructor(@inject('EventRepository') eventRepository: EventRepository) {
+    constructor(eventRepository: EventRepository) {
         this.eventRepository = eventRepository.Model;
     }
 
@@ -49,7 +49,7 @@ export class EventService {
         if (!event) {
             return event;
         }
-        return event.participants.find(participant => participant === userId) ?
+        return event.participants.find(participant => participant == userId) ?
             this.eventRepository.findByIdAndUpdate(
                 id,
                 { $pull: { participants: userId } },

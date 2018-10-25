@@ -3,18 +3,15 @@ import {verify} from "jsonwebtoken";
 import {Socket} from "socket.io";
 import {SocketAuthMiddleware} from "../socket/types";
 import {SocketActions} from "../shared/constants";
-import {inject, injectable} from "inversify";
+import {injectable} from "inversify";
 import {SocketService} from "./socket.service";
-import {Authenticator} from "../middleware/authenticator";
+import {Authenticator} from "../middlewares/authenticator";
 import {UserModel} from "../repository/user.repository";
 
 @injectable()
 export class AuthService implements SocketAuthMiddleware {
 
-    constructor(
-        @inject('SocketService') private socketService: SocketService,
-        @inject('Authenticator') private authenticator: Authenticator
-    ) { }
+    constructor(private socketService: SocketService, private authenticator: Authenticator) { }
 
      readonly authenticate = (socket: Socket): Promise<UserModel> => {
         return new Promise<any>((resolve, reject) => {

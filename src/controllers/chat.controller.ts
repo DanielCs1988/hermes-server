@@ -1,19 +1,11 @@
-import {
-    BaseHttpController,
-    controller,
-    httpGet,
-    httpPost,
-    request,
-    requestParam
-} from "inversify-express-utils";
-import {inject} from "inversify";
+import { BaseHttpController, controller, httpGet, request, requestParam } from "inversify-express-utils";
 import {ChatService} from "../services/chat.service";
 import {RequestWithUser} from "../shared/models";
 
 @controller('/chat')
 export class ChatController extends BaseHttpController {
 
-    constructor(@inject('ChatService') private chatService: ChatService) {
+    constructor(private chatService: ChatService) {
         super();
     }
 
