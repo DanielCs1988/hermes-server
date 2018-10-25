@@ -23,7 +23,7 @@ export class AuthService implements SocketAuthMiddleware {
                     this.userJoined(socket, user);
                     resolve(user);
                 } catch (error) {
-                    ack(error);
+                    ack(error.message);
                     socket.disconnect();
                     reject(error);
                 }

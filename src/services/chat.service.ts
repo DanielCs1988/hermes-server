@@ -61,8 +61,8 @@ export class ChatService {
             createdAt: new Date().getTime()
         });
         const conversation = await this.conversationModel.findOneAndUpdate(
-            { users: { $all: [message.to, message.from] } },
-            { history: { $push: newMessage } }
+            { users: { $all: [message.to, currentUser] } },
+            { $push: { history: newMessage } }
         );
         if (!conversation) {
             throw new Error('Target user does not exist or no conversation has been initialized!');

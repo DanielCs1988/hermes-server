@@ -12,7 +12,7 @@ export class SocketController implements Controller {
 
     handlers = (): HandlerMapping => {
         return {
-            [SocketActions.SEND_PRIVATE_MESSAGE]: this.onSendMessage,
+            [SocketActions.SEND_MESSAGE]: this.onSendMessage,
             [SocketActions.DISCONNECT]: this.onDisconnect
         };
     };
@@ -23,7 +23,7 @@ export class SocketController implements Controller {
             ack(null, messageToSend);
             const targetSocketId = this.socketService.getSocketId(messageToSend.to);
             if (targetSocketId) {
-                socket.to(targetSocketId).emit(SocketActions.SEND_PRIVATE_MESSAGE, messageToSend);
+                socket.to(targetSocketId).emit(SocketActions.SEND_MESSAGE, messageToSend);
             }
         } catch (error) {
             ack(error.message);

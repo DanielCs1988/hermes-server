@@ -3,5 +3,5 @@ export const enum SocketActions {
     CONNECTION = 'connection',
     DISCONNECT = 'disconnect',
     SEND_USER_LIST = 'sendUserList',
-    SEND_PRIVATE_MESSAGE = 'sendPrivateMessage'
+    SEND_MESSAGE = 'sendMessage'
 }

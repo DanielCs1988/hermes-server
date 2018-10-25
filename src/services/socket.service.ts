@@ -2,22 +2,22 @@ import { injectable } from "inversify";
 
 @injectable()
 export class SocketService {
-    private readonly users = new Map<string, string>();
+    private readonly users: { [key: string]: string } = {};
 
     get Users() {
-        return [...this.users.keys()];
+        return Object.keys(this.users);
     }
 
-    getSocketId = (userSub: string) => {
-        return this.users.get(userSub);
+    getSocketId = (userId: string) => {
+        return this.users[userId];
     };
 
-    userJoined = (userSub: string, id: string) => {
-        this.users.set(userSub, id);
+    userJoined = (userId: string, socketId: string) => {
+        this.users[userId] = socketId;
     };
 
-    userLeft = (userSub: string) => {
-        this.users.delete(userSub);
+    userLeft = (userId: string) => {
+        delete this.users[userId];
         return this.Users;
     };
 }

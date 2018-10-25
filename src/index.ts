@@ -4,6 +4,7 @@ import "reflect-metadata";
 import { InversifyExpressServer } from "inversify-express-utils";
 import "./controllers/user.controller";
 import "./controllers/event.controller";
+import "./controllers/chat.controller";
 import {SocketServer} from "./socket/socket-server";
 import {AuthService} from "./services/auth.service";
 import {SocketController} from "./controllers/socket.controller";
