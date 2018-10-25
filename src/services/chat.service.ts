@@ -33,10 +33,11 @@ export class ChatService {
             }
         ]);
         return conversations.map(conversation => {
-            const { _id, ...message } = conversation.lastMessage;
+            const { id, users, lastMessage: { _id, ...message } } = conversation;
             message.id = _id;
             return {
-                ...conversation,
+                id,
+                target: users.find(user => user != currentUser),
                 lastMessage: message
             }
         });
