@@ -1,9 +1,10 @@
 import { injectable } from "inversify";
 import {IMessage} from "../shared/models";
 import {ChatRepository, ConversationModel, MessageModel} from "../repository/chat.repository";
-import { Model } from "mongoose";
+import {Model, Schema} from "mongoose";
 import { pick } from 'lodash';
 import {UserModel, UserRepository} from "../repository/user.repository";
+import {ObjectId} from "bson";
 
 @injectable()
 export class ChatService {
@@ -17,8 +18,11 @@ export class ChatService {
         this.userRepository = userRepository.Model;
     }
 
-    readonly getAllConversations = async () => {
+    readonly getAllConversations = async (currentUser: string) => {
         const conversations = await this.conversationModel.aggregate([
+            {
+                $match: { users: new ObjectId(currentUser) }
+            },
             {
                 $project: {
                     id: "$_id",

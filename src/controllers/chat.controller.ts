@@ -10,11 +10,11 @@ export class ChatController extends BaseHttpController {
     }
 
     @httpGet('/conversations')
-    private async getConversations() {
+    private async getConversations(@request() req: RequestWithUser) {
         try {
-            return await this.chatService.getAllConversations();
+            return await this.chatService.getAllConversations(req.user.id);
         } catch (error) {
-            return this.badRequest(JSON.stringify(error, undefined, 4));
+            return this.badRequest('Database error!');
         }
     }
 
